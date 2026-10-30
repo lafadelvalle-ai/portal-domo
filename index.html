@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Cliente | DOMO Inteligência</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030508;
+            color: #F3F4F6;
+        }
+        .dark-glass {
+            background: linear-gradient(135deg, rgba(15, 23, 36, 0.65) 0%, rgba(5, 8, 14, 0.85) 100%);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+        }
+        .dark-glass-emerald {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(6, 10, 17, 0.90) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.15), inset 0 1px 2px rgba(16, 185, 129, 0.35);
+        }
+        .emerald-gradient {
+            background: linear-gradient(135deg, #D1FAE5 0%, #10B981 55%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-6">
+
+    <!-- HEADER DO PORTAL -->
+    <header class="max-w-4xl mx-w-full w-full mx-auto flex items-center justify-between pb-6 border-b border-white/10">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl dark-glass-emerald flex items-center justify-center">
+                <div class="w-3.5 h-3.5 bg-[#10B981] rounded-full shadow-[0_0_12px_#10B981]"></div>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-wider text-white">DOMO</span>
+                <span class="text-[10px] block text-[#10B981] font-semibold tracking-widest uppercase">Portal do Cliente</span>
+            </div>
+        </div>
+        <div id="statusSessao" class="hidden items-center space-x-4">
+            <span id="nomeEmpresaLogada" class="text-xs text-gray-300 font-medium"></span>
+            <button onclick="sairPortal()" class="text-xs text-red-400 hover:text-red-300 transition font-bold">
+                <i class="fas fa-sign-out-alt mr-1"></i> Sair
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="max-w-xl w-full mx-auto my-auto py-10">
+        
+        <!-- TELA DE LOGIN (Mostrada se não estiver logado) -->
+        <div id="telaLogin" class="dark-glass p-8 rounded-3xl text-center">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-[#10B981] flex items-center justify-center text-2xl mx-auto mb-6 shadow-inner">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-white mb-2">Acesse seu Painel</h1>
+            <p class="text-xs text-gray-400 mb-8 leading-relaxed">Digite o WhatsApp cadastrado no momento da contratação para entrar no seu painel de controle.</p>
+            
+            <form onsubmit="fazerLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-2">Seu WhatsApp (com DDD)</label>
+                    <input type="text" id="whatsappLogin" required placeholder="Ex: 67998673141" class="w-full bg-[#030508]/90 border border-white/10 focus:border-[#10B981] rounded-xl px-4 py-3.5 text-sm text-white outline-none transition">
+                </div>
+                <button type="submit" class="w-full bg-[#10B981] hover:bg-emerald-400 text-black font-extrabold py-3.5 rounded-xl text-sm transition shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer">
+                    ACESSAR MEU PAINEL
+                </button>
+            </form>
+        </div>
+
+        <!-- TELA DO PAINEL (Mostrada após o login) -->
+        <div id="telaPainel" class="hidden space-y-6">
+            <div class="dark-glass-emerald p-6 rounded-3xl">
+                <span class="text-xs uppercase tracking-widest text-[#10B981] font-bold">Status da Assinatura</span>
+                <h2 id="painelNomeEmpresa" class="text-xl font-extrabold text-white mt-1 mb-2">Empresa Exemplo</h2>
+                <p class="text-xs text-gray-300">Plano Ativo: <strong id="painelPlano" class="text-white">Dominação Regional</strong> (Contrato 6 Meses)</p>
+            </div>
+
+            <!-- AÇÕES AUTÔNOMAS DO CLIENTE -->
+            <div class="grid grid-cols-1 gap-4">
+                <!-- Conectar Google Maps -->
+                <div class="dark-glass p-6 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white mb-1"><i class="fab fa-google text-[#10B981] mr-2"></i> Google Maps e Perfil</h3>
+                        <p class="text-xs text-gray-400">Conecte sua ficha ou autorize nossos robôs.</p>
+                    </div>
+                    <a id="linkConectarGoogle" href="#" target="_blank" class="bg-white/10 hover:bg-[#10B981] hover:text-black text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                        Conectar Ficha
+                    </a>
+                </div>
+
+                <!-- Enviar Fotos para SEO Local -->
+                <div class="dark-glass p-6 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white mb-1"><i class="fas fa-camera text-[#10B981] mr-2"></i> Enviar Fotos da Empresa</h3>
+                        <p class="text-xs text-gray-400">Envie imagens para os robôs otimizarem com SEO.</p>
+                    </div>
+                    <a href="https://wa.me/5567998673141?text=Olá!%20Sou%20cliente%20DOMO%20e%20quero%20enviar%20fotos%20para%20otimização." target="_blank" class="bg-white/10 hover:bg-[#10B981] hover:text-black text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                        Enviar Fotos
+                    </a>
+                </div>
+
+                <!-- Pedir Fatura PIX -->
+                <div class="dark-glass p-6 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white mb-1"><i class="fas fa-bolt text-[#10B981] mr-2"></i> Fatura e Mensalidade</h3>
+                        <p class="text-xs text-gray-400">Solicite a 2ª via da fatura via PIX.</p>
+                    </div>
+                    <a href="https://wa.me/5567998673141?text=Olá!%20Quero%20minha%20fatura%20PIX%20da%20DOMO." target="_blank" class="bg-[#10B981] hover:bg-emerald-400 text-black text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                        Pedir PIX
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-4xl mx-w-full w-full mx-auto text-center pt-6 border-t border-white/10 text-xs text-gray-500">
+        <p>&copy; 2026 DOMO Inteligência. Autonomia e Performance Total.</p>
+    </footer>
+
+    <!-- SCRIPT DE CONEXÃO COM O N8N / PLANILHA -->
+    <script>
+        // COLE AQUI A URL DO SEU WEBHOOK DO N8N QUANDO CRIAR O FLUXO
+        const URL_WEBHOOK_N8N = "SUA_URL_DO_WEBHOOK_DO_N8N_AQUI";
+
+        async function fazerLogin(event) {
+            event.preventDefault();
+            const wpp = document.getElementById('whatsappLogin').value.trim();
+
+            const botao = event.target.querySelector('button');
+            botao.innerText = "VERIFICANDO...";
+            botao.disabled = true;
+
+            try {
+                const resposta = await fetch(URL_WEBHOOK_N8N, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ whatsapp: wpp })
+                });
+
+                const dados = await resposta.json();
+
+                if (dados && dados.nome_empresa) {
+                    localStorage.setItem('domo_cliente_dados', JSON.stringify(dados));
+                    carregarPainel(dados);
+                } else {
+                    alert('WhatsApp não encontrado na base de clientes. Verifique o número.');
+                    botao.innerText = "ACESSAR MEU PAINEL";
+                    botao.disabled = false;
+                }
+            } catch (erro) {
+                console.error('Erro ao conectar:', erro);
+                alert('Erro de conexão com o servidor. Tente novamente.');
+                botao.innerText = "ACESSAR MEU PAINEL";
+                botao.disabled = false;
+            }
+        }
+
+        function carregarPainel(cliente) {
+            document.getElementById('telaLogin').classList.add('hidden');
+            document.getElementById('telaPainel').classList.remove('hidden');
+            document.getElementById('statusSessao').classList.remove('hidden');
+            document.getElementById('statusSessao').classList.add('flex');
+            
+            document.getElementById('nomeEmpresaLogada').innerText = cliente.nome_empresa;
+            document.getElementById('painelNomeEmpresa').innerText = cliente.nome_empresa;
+            document.getElementById('painelPlano').innerText = cliente.plano;
+            
+            document.getElementById('linkConectarGoogle').href = `https://wa.me/5567998673141?text=${encodeURIComponent('Olá! Sou da empresa ' + cliente.nome_empresa + ' e quero conectar meu Google Maps.')}`;
+        }
+
+        function sairPortal() {
+            localStorage.removeItem('domo_cliente_dados');
+            location.reload();
+        }
+
+        window.onload = function() {
+            const salvo = localStorage.getItem('domo_cliente_dados');
+            if (salvo) {
+                const cliente = JSON.parse(salvo);
+                carregarPainel(cliente);
+            }
+        }
+    </script>
+</body>
+</html>
